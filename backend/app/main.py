@@ -1,3 +1,4 @@
+from app.routes import health, upload
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -48,6 +49,7 @@ def create_app() -> FastAPI:
 
     # Register routes
     app.include_router(health.router)
+    app.include_router(upload.router) 
 
     return app
 

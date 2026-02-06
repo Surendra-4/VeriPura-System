@@ -1,3 +1,4 @@
+from app.infra.qr_generator import QRGenerator
 from app.infra.batch_id import BatchIDGenerator
 from app.infra.ledger import Ledger
 from app.logger import logger
@@ -19,6 +20,7 @@ class VerificationService:
     def __init__(self):
         self.ledger = Ledger()
         self.batch_id_generator = BatchIDGenerator()
+        self.qr_generator = QRGenerator()
 
     async def record_verification(
         self, metadata: FileMetadata, validation: ValidationResponse
@@ -60,6 +62,15 @@ class VerificationService:
             document_metadata=doc_summary,
             validation_result=validation_summary,
         )
+        
+                # Generate QR code (ADD THIS BLOCK)
+        try:
+            self.qr_generator.generate(batch_id)
+            logger.info(f"QR code generated for {batch_id}")
+        except Exception as e:
+            # Log error but don't fail the entire verification
+            # QR can be generated on-demand later
+            logger.error(f"QR generation failed for {batch_id}: {str(e)}")
 
         return record
 

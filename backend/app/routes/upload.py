@@ -86,6 +86,7 @@ async def upload_document(
                 "recorded_at": ledger_record.timestamp.isoformat(),
                 "record_hash": ledger_record.record_hash,
                 "verification_url": f"/api/v1/verify/{ledger_record.batch_id}",
+                "qr_code_url": f"/api/v1/qr/{ledger_record.batch_id}",
             },
         }
 

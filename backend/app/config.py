@@ -49,6 +49,11 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore",
     )
+    
+    # QR Code Configuration
+    qr_code_size: int = 300  # Pixels (square)
+    qr_base_url: str = "http://localhost:8000"  # Will be replaced in production
+
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

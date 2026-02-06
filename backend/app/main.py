@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.logger import logger
-from app.routes import health, upload, verify
+from app.routes import health, upload, verify, qr
 
 
 @asynccontextmanager
@@ -51,6 +51,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(upload.router) 
     app.include_router(verify.router)
+    app.include_router(qr.router)
 
     return app
 

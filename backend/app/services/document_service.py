@@ -2,6 +2,8 @@ import mimetypes
 from datetime import datetime
 from pathlib import Path
 from typing import BinaryIO
+from app.ml.pipeline import MLPipeline
+from app.schemas.validation import ValidationResponse, RuleViolationSchema
 
 from fastapi import UploadFile
 
@@ -84,6 +86,46 @@ class DocumentService:
                 message="File extension does not match content type",
                 error_code="MIME_MISMATCH",
             )
+
+    async def validate_document(self, metadata: FileMetadata, file_path: Path) -> ValidationResponse:
+        """
+        Run ML validation on uploaded document.
+        
+        Args:
+            metadata: File metadata from upload
+            file_path: Path to stored file
+            
+        Returns:
+            ValidationResponse with fraud score
+        """
+        pipeline = MLPipeline()
+        
+        result = await pipeline.validate_document(
+            file_path=file_path,
+            file_id=metadata.file_id,
+            doc_type=metadata.document_type
+        )
+        
+        # Convert to response schema
+        violations = [
+            RuleViolationSchema(
+                rule_name=v.rule_name,
+                severity=v.severity,
+                message=v.message,
+                feature_values=v.feature_values
+            )
+            for v in result.rule_violations
+        ]
+        
+        return ValidationResponse(
+            file_id=result.file_id,
+            fraud_score=result.fraud_score,
+            is_anomaly=result.is_anomaly,
+            risk_level=result.risk_level,
+            rule_violations=violations,
+            top_features=result.top_features,
+            text_excerpt=result.text_excerpt
+        )
 
     async def process_upload(self, file: UploadFile) -> FileMetadata:
         """

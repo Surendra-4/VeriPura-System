@@ -1,7 +1,10 @@
+from pathlib import Path
+
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
 
 from app.logger import logger
-from app.schemas.upload import UploadError, UploadResponse
+from app.schemas.upload import UploadError
+from app.schemas.validation import ValidationResponse
 from app.services.document_service import DocumentService, DocumentServiceError
 
 router = APIRouter(prefix="/api/v1", tags=["Upload"])
@@ -9,7 +12,7 @@ router = APIRouter(prefix="/api/v1", tags=["Upload"])
 
 @router.post(
     "/upload",
-    response_model=UploadResponse,
+    response_model=dict,  # Changed from UploadResponse
     status_code=status.HTTP_201_CREATED,
     responses={
         400: {"model": UploadError, "description": "Validation error"},
@@ -30,30 +33,61 @@ async def upload_document(
 
     Returns:
     - File metadata including unique file ID (SHA-256 hash)
+    - ML validation results (fraud score, risk level)
     - Storage path for internal reference
     """
     document_service = DocumentService()
 
     try:
+        # Step 1: Process upload
         metadata = await document_service.process_upload(file)
 
-        # Construct relative storage path for response
-        relative_path = f"{metadata.sha256_hash[:2]}/{metadata.sha256_hash[2:4]}/{metadata.file_id}"
+        # Step 2: Get file path for validation
+        storage_service = document_service.storage
 
-        return UploadResponse(
-            metadata=metadata,
-            storage_path=relative_path,
+        file_path = storage_service.get_file_path(
+            metadata.sha256_hash,
+            Path(metadata.original_filename).suffix,
         )
+
+        # Step 3: Run ML validation
+        validation: ValidationResponse = await document_service.validate_document(
+            metadata,
+            file_path,
+        )
+
+        # Construct relative storage path for response
+        relative_path = (
+            f"{metadata.sha256_hash[:2]}/"
+            f"{metadata.sha256_hash[2:4]}/"
+            f"{metadata.file_id}"
+        )
+
+        # Combined response
+        return {
+            "upload": {
+                "success": True,
+                "message": "File uploaded and validated successfully",
+                "metadata": metadata.model_dump(),
+                "storage_path": relative_path,
+            },
+            "validation": validation.model_dump(),
+        }
 
     except DocumentServiceError as e:
         logger.warning(f"Upload validation failed: {e.message}")
+
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": e.message, "error_code": e.error_code},
+            detail={
+                "error": e.message,
+                "error_code": e.error_code,
+            },
         )
 
     except Exception as e:
         logger.error(f"Unexpected upload error: {str(e)}", exc_info=True)
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={

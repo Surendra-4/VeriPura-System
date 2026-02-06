@@ -36,6 +36,12 @@ class Settings(BaseSettings):
 
     # Logging
     log_level: str = "INFO"
+    
+    tesseract_cmd: str = "/opt/homebrew/bin/tesseract"  
+    model_version: str = "v1"
+    anomaly_threshold: float = 0.6  # Scores above this are flagged
+    min_text_length: int = 10  # Minimum characters for valid document
+    max_text_length: int = 100000  # Maximum characters to process
 
     model_config = SettingsConfigDict(
         env_file=".env",

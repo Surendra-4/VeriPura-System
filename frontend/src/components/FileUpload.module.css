@@ -1,0 +1,40 @@
+.uploadArea {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: var(--color-surface);
+}
+
+.uploadArea:hover:not(.disabled) {
+  border-color: var(--color-primary);
+  background-color: rgba(33, 128, 141, 0.05);
+}
+
+.dragging {
+  border-color: var(--color-primary);
+  background-color: rgba(33, 128, 141, 0.1);
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uploadIcon {
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+}
+
+.uploadText {
+  font-size: 1rem;
+  margin-bottom: var(--space-sm);
+  color: var(--color-text);
+}
+
+.uploadHint {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}

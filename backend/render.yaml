@@ -20,3 +20,5 @@ services:
         value: v1
       - key: QR_CODE_SIZE
         value: 300
+      - key: CORS_ORIGINS
+        value: '["https://veripura-system.vercel.app","https://veripura-system.onrender.com"]'

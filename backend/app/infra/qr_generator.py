@@ -1,5 +1,4 @@
 import base64
-import io
 from pathlib import Path
 from typing import Optional
 

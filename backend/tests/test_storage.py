@@ -1,9 +1,8 @@
 import io
-from pathlib import Path
 
 import pytest
 
-from app.infra.storage import StorageService, StorageError
+from app.infra.storage import StorageService
 
 
 @pytest.fixture

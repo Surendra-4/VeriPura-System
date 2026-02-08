@@ -1,0 +1,567 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "VeriPura Backend",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "description": "Health check endpoint for monitoring and load balancers.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/upload": {
+      "post": {
+        "tags": [
+          "Upload"
+        ],
+        "summary": "Upload Document",
+        "description": "Upload a supply chain document for validation.\n\nAccepts:\n- PDF files (invoices, certificates, reports)\n- Images (PNG, JPG, JPEG) - scanned documents\n- CSV files (shipment data, inventory logs)\n\nReturns:\n- File metadata including unique file ID (SHA-256 hash)\n- ML validation results (fraud score, risk level)\n- Storage path for internal reference\n- Ledger verification record",
+        "operationId": "upload_document_api_v1_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_document_api_v1_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Upload Document Api V1 Upload Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/verify/{batch_id}": {
+      "get": {
+        "tags": [
+          "Verification"
+        ],
+        "summary": "Verify Batch",
+        "description": "Retrieve verification record by batch ID.\n\nThis is the **public traceability endpoint** - it can be:\n- Linked from QR codes\n- Shared with customers\n- Used by auditors\n\nNo authentication required (verification records are public by design).",
+        "operationId": "verify_batch_api_v1_verify__batch_id__get",
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Batch Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerRecord"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Batch ID not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/verify/integrity/check": {
+      "get": {
+        "tags": [
+          "Verification"
+        ],
+        "summary": "Check Ledger Integrity",
+        "description": "Verify cryptographic integrity of entire ledger.\n\nChecks:\n- Hash chain is unbroken\n- Each record hash matches its content\n- No tampering detected\n\nThis is an administrative endpoint (add authentication in production).",
+        "operationId": "check_ledger_integrity_api_v1_verify_integrity_check_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerIntegrityReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/qr/{batch_id}": {
+      "get": {
+        "tags": [
+          "QR Codes"
+        ],
+        "summary": "Get Qr Code",
+        "description": "Download QR code image for a batch ID.\n\nReturns PNG image (300x300px by default).\nSuitable for:\n- Printing on labels/packaging\n- Embedding in documents\n- Sharing digitally\n\nIf QR code doesn't exist, it will be generated on-demand.",
+        "operationId": "get_qr_code_api_v1_qr__batch_id__get",
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Batch Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "QR code image",
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "image/png": {}
+            }
+          },
+          "404": {
+            "description": "Batch ID not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/qr/{batch_id}/base64": {
+      "get": {
+        "tags": [
+          "QR Codes"
+        ],
+        "summary": "Get Qr Code Base64",
+        "description": "Get QR code as base64-encoded string.\n\nUseful for:\n- Embedding in JSON responses\n- Frontend display without separate image request\n- Email/document generation\n\nResponse format:\n{\n  \"batch_id\": \"BATCH-...\",\n  \"qr_code_base64\": \"iVBORw0KGgoAAAANSUhEUgAA...\",\n  \"format\": \"png\",\n  \"size\": 300\n}\n\nTo display in HTML:\n<img src=\"data:image/png;base64,{qr_code_base64}\" />",
+        "operationId": "get_qr_code_base64_api_v1_qr__batch_id__base64_get",
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Batch Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QRCodeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_upload_document_api_v1_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File",
+            "description": "Document to upload (PDF, image, or CSV)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_document_api_v1_upload_post"
+      },
+      "DocumentMetadataSummary": {
+        "properties": {
+          "original_filename": {
+            "type": "string",
+            "title": "Original Filename"
+          },
+          "file_size": {
+            "type": "integer",
+            "title": "File Size"
+          },
+          "document_type": {
+            "type": "string",
+            "title": "Document Type"
+          },
+          "mime_type": {
+            "type": "string",
+            "title": "Mime Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "original_filename",
+          "file_size",
+          "document_type",
+          "mime_type"
+        ],
+        "title": "DocumentMetadataSummary",
+        "description": "Subset of document metadata for ledger storage"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "app_name": {
+            "type": "string",
+            "title": "App Name"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "environment": {
+            "type": "string",
+            "title": "Environment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "app_name",
+          "version",
+          "environment"
+        ],
+        "title": "HealthResponse"
+      },
+      "LedgerIntegrityReport": {
+        "properties": {
+          "is_valid": {
+            "type": "boolean",
+            "title": "Is Valid"
+          },
+          "total_records": {
+            "type": "integer",
+            "title": "Total Records"
+          },
+          "checked_records": {
+            "type": "integer",
+            "title": "Checked Records"
+          },
+          "first_invalid_record": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Invalid Record"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_valid",
+          "total_records",
+          "checked_records"
+        ],
+        "title": "LedgerIntegrityReport",
+        "description": "Result of ledger integrity check"
+      },
+      "LedgerRecord": {
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "title": "Batch Id",
+            "description": "Unique batch identifier for traceability"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "UTC timestamp of record creation"
+          },
+          "file_id": {
+            "type": "string",
+            "title": "File Id",
+            "description": "SHA-256 hash of uploaded file"
+          },
+          "document_metadata": {
+            "$ref": "#/components/schemas/DocumentMetadataSummary"
+          },
+          "validation_result": {
+            "$ref": "#/components/schemas/ValidationResultSummary"
+          },
+          "previous_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Hash",
+            "description": "Hash of previous record (null for genesis)"
+          },
+          "record_hash": {
+            "type": "string",
+            "title": "Record Hash",
+            "description": "SHA-256 hash of this record"
+          }
+        },
+        "type": "object",
+        "required": [
+          "batch_id",
+          "timestamp",
+          "file_id",
+          "document_metadata",
+          "validation_result",
+          "record_hash"
+        ],
+        "title": "LedgerRecord",
+        "description": "Single immutable ledger entry.\nOnce written, this record is permanent and cryptographically linked."
+      },
+      "QRCodeResponse": {
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "title": "Batch Id"
+          },
+          "qr_code_base64": {
+            "type": "string",
+            "title": "Qr Code Base64"
+          },
+          "format": {
+            "type": "string",
+            "title": "Format",
+            "default": "png"
+          },
+          "size": {
+            "type": "integer",
+            "title": "Size"
+          }
+        },
+        "type": "object",
+        "required": [
+          "batch_id",
+          "qr_code_base64",
+          "size"
+        ],
+        "title": "QRCodeResponse",
+        "description": "Response containing base64-encoded QR code"
+      },
+      "UploadError": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": false
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Human-readable error message"
+          },
+          "error_code": {
+            "type": "string",
+            "title": "Error Code",
+            "description": "Machine-readable error code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error",
+          "error_code"
+        ],
+        "title": "UploadError",
+        "description": "Error response for failed uploads."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "ValidationResultSummary": {
+        "properties": {
+          "fraud_score": {
+            "type": "number",
+            "title": "Fraud Score"
+          },
+          "risk_level": {
+            "type": "string",
+            "title": "Risk Level"
+          },
+          "is_anomaly": {
+            "type": "boolean",
+            "title": "Is Anomaly"
+          },
+          "rule_violation_count": {
+            "type": "integer",
+            "title": "Rule Violation Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fraud_score",
+          "risk_level",
+          "is_anomaly",
+          "rule_violation_count"
+        ],
+        "title": "ValidationResultSummary",
+        "description": "Subset of validation result for ledger storage"
+      }
+    }
+  }
+}

@@ -31,9 +31,7 @@ async def verify_batch(batch_id: str):
 
     except ValueError as e:
         logger.warning(f"Batch ID lookup failed: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail={"error": str(e)}
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": str(e)})
 
 
 @router.get("/verify/integrity/check", response_model=LedgerIntegrityReport)

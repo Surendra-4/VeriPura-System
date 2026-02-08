@@ -1,4 +1,3 @@
-from app.routes import health, upload
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -6,7 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.logger import logger
-from app.routes import health, upload, verify, qr
+from app.middleware.request_id import RequestIDMiddleware
+from app.routes import health, qr, upload, verify
 
 
 @asynccontextmanager
@@ -19,6 +19,10 @@ async def lifespan(app: FastAPI):
     logger.info(f"Environment: {settings.environment}")
     logger.info(f"Upload directory: {settings.upload_dir}")
     logger.info(f"Model directory: {settings.model_dir}")
+
+    from app.ml.model_loader import model_loader
+
+    model_loader.preload()
 
     yield
 
@@ -38,6 +42,8 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    app.add_middleware(RequestIDMiddleware)
+
     # CORS Middleware
     app.add_middleware(
         CORSMiddleware,
@@ -49,7 +55,7 @@ def create_app() -> FastAPI:
 
     # Register routes
     app.include_router(health.router)
-    app.include_router(upload.router) 
+    app.include_router(upload.router)
     app.include_router(verify.router)
     app.include_router(qr.router)
 

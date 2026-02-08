@@ -60,12 +60,18 @@ async def test_hash_chaining(ledger):
 
     # Add first record
     record1 = await ledger.append_record(
-        batch_id="BATCH-1", file_id="file1", document_metadata=doc_meta, validation_result=val_result
+        batch_id="BATCH-1",
+        file_id="file1",
+        document_metadata=doc_meta,
+        validation_result=val_result,
     )
 
     # Add second record
     record2 = await ledger.append_record(
-        batch_id="BATCH-2", file_id="file2", document_metadata=doc_meta, validation_result=val_result
+        batch_id="BATCH-2",
+        file_id="file2",
+        document_metadata=doc_meta,
+        validation_result=val_result,
     )
 
     # Verify chain

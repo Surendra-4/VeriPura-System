@@ -111,7 +111,9 @@ class MLPipeline:
 
         # Convert features to numpy array (ordered by feature names)
         feature_names = self.feature_extractor.get_feature_names()
-        feature_vector = np.array([features.get(name, 0.0) for name in feature_names]).reshape(1, -1)
+        feature_vector = np.array([features.get(name, 0.0) for name in feature_names]).reshape(
+            1, -1
+        )
 
         # Scale features
         feature_vector_scaled = scaler.transform(feature_vector)
@@ -124,9 +126,7 @@ class MLPipeline:
 
         return is_anomaly, float(score)
 
-    def _compute_fraud_score(
-        self, violations: list[RuleViolation], anomaly_score: float
-    ) -> float:
+    def _compute_fraud_score(self, violations: list[RuleViolation], anomaly_score: float) -> float:
         """
         Compute final fraud score (0-100).
 
@@ -148,9 +148,7 @@ class MLPipeline:
 
         return fraud_score
 
-    def _compute_risk_level(
-        self, fraud_score: float, violations: list[RuleViolation]
-    ) -> str:
+    def _compute_risk_level(self, fraud_score: float, violations: list[RuleViolation]) -> str:
         """
         Map fraud score to risk level.
         Critical violations override score-based level.

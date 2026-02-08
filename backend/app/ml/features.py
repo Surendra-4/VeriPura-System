@@ -77,9 +77,7 @@ class FeatureExtractor:
         # Shannon entropy (measure of randomness)
         # High entropy = more random, low = repetitive
         counter = Counter(text)
-        entropy = -sum(
-            (count / chars) * math.log2(count / chars) for count in counter.values()
-        )
+        entropy = -sum((count / chars) * math.log2(count / chars) for count in counter.values())
 
         return {
             "entropy": entropy,
@@ -130,9 +128,7 @@ class FeatureExtractor:
         url_count = len(re.findall(r"https?://[^\s]+", text))
 
         return {
-            "empty_line_ratio": (len(lines) - len(non_empty_lines)) / len(lines)
-            if lines
-            else 0.0,
+            "empty_line_ratio": (len(lines) - len(non_empty_lines)) / len(lines) if lines else 0.0,
             "date_count": float(len(dates)),
             "email_count": float(email_count),
             "url_count": float(url_count),

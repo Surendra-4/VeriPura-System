@@ -76,7 +76,9 @@ class RuleEngine:
                         rule_name=rule_name,
                         severity=severity,
                         message=message,
-                        feature_values={k: features.get(k, 0.0) for k in self._relevant_features(rule_name)},
+                        feature_values={
+                            k: features.get(k, 0.0) for k in self._relevant_features(rule_name)
+                        },
                     )
                     violations.append(violation)
                     logger.info(f"Rule violation: {rule_name} ({severity})")

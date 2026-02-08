@@ -1,5 +1,4 @@
 import pickle
-from pathlib import Path
 from typing import Optional
 
 from sklearn.ensemble import IsolationForest
@@ -51,7 +50,7 @@ class ModelLoader:
 
         if not model_path.exists() or not scaler_path.exists():
             raise FileNotFoundError(
-                f"Model files not found. Run: poetry run python scripts/train_model.py"
+                "Model files not found. Run: poetry run python scripts/train_model.py"
             )
 
         logger.info(f"Loading model {settings.model_version} from disk")
@@ -70,6 +69,18 @@ class ModelLoader:
     def is_loaded(self) -> bool:
         """Check if models are loaded"""
         return self._model is not None and self._scaler is not None
+
+    def preload(self):
+        """
+        Pre-load models at startup.
+        Call this during application startup to avoid cold start on first request.
+        """
+        try:
+            self.load_models()
+            logger.info("Models pre-loaded successfully")
+        except Exception as e:
+            logger.error(f"Model pre-load failed: {str(e)}")
+            # Don't fail startup, models will load on first request
 
 
 # Global instance

@@ -1,0 +1,16 @@
+{
+  "version": "v2",
+  "trained_at": "2026-02-07T14:33:37.562638",
+  "model_type": "IsolationForest",
+  "n_estimators": 100,
+  "contamination": 0.1,
+  "performance": {
+    "mean": -0.49074911957445344,
+    "std": 0.05079536719776472,
+    "min": -0.5446649118972293,
+    "max": -0.4033810641906068,
+    "anomaly_rate": 0.1111111111111111,
+    "anomaly_count": 1,
+    "total_samples": 9
+  }
+}

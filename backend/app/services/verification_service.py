@@ -1,6 +1,6 @@
-from app.infra.qr_generator import QRGenerator
 from app.infra.batch_id import BatchIDGenerator
 from app.infra.ledger import Ledger
+from app.infra.qr_generator import QRGenerator
 from app.logger import logger
 from app.schemas.ledger import (
     DocumentMetadataSummary,
@@ -62,8 +62,8 @@ class VerificationService:
             document_metadata=doc_summary,
             validation_result=validation_summary,
         )
-        
-                # Generate QR code (ADD THIS BLOCK)
+
+        # Generate QR code (ADD THIS BLOCK)
         try:
             self.qr_generator.generate(batch_id)
             logger.info(f"QR code generated for {batch_id}")

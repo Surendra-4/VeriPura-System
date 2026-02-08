@@ -9,7 +9,6 @@ Usage:
 """
 
 import pickle
-from pathlib import Path
 
 import numpy as np
 from sklearn.ensemble import IsolationForest

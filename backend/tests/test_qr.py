@@ -1,5 +1,5 @@
+
 import pytest
-from pathlib import Path
 
 from app.infra.qr_generator import QRGenerator
 
@@ -9,7 +9,7 @@ def qr_generator(tmp_path, monkeypatch):
     """Fixture with temporary QR directory"""
     from app.config import Settings
 
-    qr_dir = tmp_path / "qr_codes"
+#   qr_dir = tmp_path / "qr_codes"
     upload_dir = tmp_path / "uploads"
     upload_dir.mkdir()
 
@@ -57,6 +57,7 @@ def test_qr_base64_encoding(qr_generator):
     assert isinstance(base64_str, str)
     # Base64 should only contain valid characters
     import string
+
     valid_chars = string.ascii_letters + string.digits + "+/="
     assert all(c in valid_chars for c in base64_str)
 

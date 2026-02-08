@@ -67,9 +67,7 @@ async def upload_document(
 
         # Construct relative storage path for response
         relative_path = (
-            f"{metadata.sha256_hash[:2]}/"
-            f"{metadata.sha256_hash[2:4]}/"
-            f"{metadata.file_id}"
+            f"{metadata.sha256_hash[:2]}/" f"{metadata.sha256_hash[2:4]}/" f"{metadata.file_id}"
         )
 
         # Combined response (UPDATED)

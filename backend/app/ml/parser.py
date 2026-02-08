@@ -1,7 +1,6 @@
 import io
 import re
 from pathlib import Path
-from typing import Optional
 
 import fitz  # PyMuPDF
 import pandas as pd
@@ -77,7 +76,7 @@ class DocumentParser:
 
                 # Limit pages processed (prevent DoS)
                 if page_num >= 50:
-                    logger.warning(f"PDF too long, processing first 50 pages only")
+                    logger.warning("PDF too long, processing first 50 pages only")
                     break
 
         combined_text = "\n".join(text_parts)

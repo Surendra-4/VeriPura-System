@@ -1,4 +1,3 @@
-
 import pytest
 
 from app.infra.qr_generator import QRGenerator
@@ -9,7 +8,7 @@ def qr_generator(tmp_path, monkeypatch):
     """Fixture with temporary QR directory"""
     from app.config import Settings
 
-#   qr_dir = tmp_path / "qr_codes"
+    #   qr_dir = tmp_path / "qr_codes"
     upload_dir = tmp_path / "uploads"
     upload_dir.mkdir()
 

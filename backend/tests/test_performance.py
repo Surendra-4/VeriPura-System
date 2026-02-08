@@ -21,6 +21,7 @@ def client():
 def sample_pdf():
     """Generate real in-memory PDF for performance tests"""
     from io import BytesIO
+
     from reportlab.pdfgen import canvas
 
     buffer = BytesIO()

@@ -53,3 +53,7 @@ frontend/.env.local
 
 # Logs
 *.log
+
+# Runtime data
+backend/data/
+backend/data/qr_codes/

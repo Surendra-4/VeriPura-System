@@ -14,7 +14,7 @@ COPY backend/ .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Train ML model
-RUN python scripts/train_model.py
+RUN PYTHONPATH=/app python scripts/train_model.py
 
 EXPOSE 8000
 

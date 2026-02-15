@@ -99,13 +99,23 @@ class DocumentParser:
 
         with fitz.open(file_path) as doc:
             for page_num, page in enumerate(doc, start=1):
+                
+                if page_num > 1:
+                    logger.warning("OCR limited to first page (free tier optimization)")
+                    break
+            
                 # Render page to image
-                pix = page.get_pixmap(dpi=150)
+                pix = page.get_pixmap(dpi=72)
                 img_bytes = pix.tobytes("png")
                 img = Image.open(io.BytesIO(img_bytes))
+                
+                # 🔥 Convert to grayscale (faster + better OCR)
+                if img.mode != "L":
+                    img = img.convert("L")
 
                 # OCR the image
-                text = pytesseract.image_to_string(img, lang="eng")
+                text = pytesseract.image_to_string(img, lang="eng", config="--oem 1 --psm 6")
+                
                 if text.strip():
                     text_parts.append(text)
 

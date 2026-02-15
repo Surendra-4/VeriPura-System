@@ -39,6 +39,7 @@ desktop.ini
 backend/data/uploads/
 backend/data/ledger.jsonl
 backend/data/*.log
+backend/.env.example
 
 # Models (track small ones, ignore large)
 backend/models/*.pkl

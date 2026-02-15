@@ -28,6 +28,18 @@ class Settings(BaseSettings):
     # Database
     database_url: str = Field(..., validation_alias="DATABASE_URL")
 
+    # JWT
+    jwt_secret: str = Field(..., validation_alias="JWT_SECRET")
+    jwt_algorithm: str = Field("HS256", validation_alias="JWT_ALGORITHM")
+    jwt_expire_minutes: int = Field(1440, validation_alias="JWT_EXPIRE_MINUTES")
+
+    # Google OAuth
+    google_client_id: str | None = Field(default=None, validation_alias="GOOGLE_CLIENT_ID")
+    google_client_secret: str | None = Field(
+        default=None, validation_alias="GOOGLE_CLIENT_SECRET"
+    )
+    google_redirect_uri: str | None = Field(default=None, validation_alias="GOOGLE_REDIRECT_URI")
+
     # Paths (relative to project root)
     base_dir: Path = Path(__file__).parent.parent
     upload_dir: Path = base_dir / "data" / "uploads"
@@ -138,6 +150,13 @@ class Settings(BaseSettings):
                 connect_args["ssl"] = normalized_ssl
 
         return connect_args
+
+    @property
+    def google_oauth_enabled(self) -> bool:
+        """
+        True when all Google OAuth environment variables are configured.
+        """
+        return bool(self.google_client_id and self.google_client_secret and self.google_redirect_uri)
 
 
 @lru_cache

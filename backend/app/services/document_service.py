@@ -8,6 +8,7 @@ from app.config import get_settings
 from app.infra.storage import StorageService
 from app.logger import logger
 from app.ml.pipeline import MLPipeline
+from app.ml.parser import ParserError
 from app.schemas.upload import DocumentType, FileMetadata
 from app.schemas.validation import RuleViolationSchema, ValidationResponse
 
@@ -78,7 +79,11 @@ class DocumentService:
 
         # Verify MIME type matches extension
         expected_mime = mimetypes.guess_type(filename)[0]
-        if expected_mime and not mime_type.startswith(expected_mime.split("/")[0]):
+        if (
+            expected_mime
+            and mime_type != "application/octet-stream"
+            and not mime_type.startswith(expected_mime.split("/")[0])
+        ):
             raise DocumentServiceError(
                 message="File extension does not match content type",
                 error_code="MIME_MISMATCH",
@@ -99,9 +104,18 @@ class DocumentService:
         """
         pipeline = MLPipeline()
 
-        result = await pipeline.validate_document(
-            file_path=file_path, file_id=metadata.file_id, doc_type=metadata.document_type
-        )
+        try:
+            result = await pipeline.validate_document(
+                file_path=file_path, file_id=metadata.file_id, doc_type=metadata.document_type
+            )
+        except ParserError as e:
+            raise DocumentServiceError(
+                message=(
+                    "Could not parse document content. The file may be corrupted "
+                    "or not a valid PDF/image/CSV."
+                ),
+                error_code="DOCUMENT_PARSE_FAILED",
+            ) from e
 
         # Convert to response schema
         violations = [
@@ -158,14 +172,17 @@ class DocumentService:
 
         # Classify document type
         extension = Path(file.filename).suffix
-        doc_type = self.classify_document_type(file.content_type, extension)
+        doc_type = self.classify_document_type(
+            file.content_type or "application/octet-stream",
+            extension,
+        )
 
         # Build metadata
         metadata = FileMetadata(
             file_id=file_hash,
             original_filename=file.filename,
             file_size=file_size,
-            mime_type=file.content_type,
+            mime_type=file.content_type or "application/octet-stream",
             document_type=doc_type,
             upload_timestamp=datetime.utcnow(),
             sha256_hash=file_hash,

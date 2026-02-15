@@ -21,7 +21,9 @@ async def lifespan(app: FastAPI):
     logger.info(f"Environment: {settings.environment}")
     logger.info(f"Upload directory: {settings.upload_dir}")
     logger.info(f"Model directory: {settings.model_dir}")
-    
+    logger.info(f"CORS origins: {settings.cors_origins}")
+    logger.info(f"CORS origin regex: {settings.cors_origin_regex}")
+
     logger.info(f"ACTIVE TESSERACT CMD: {settings.tesseract_cmd}")
 
     from app.ml.model_loader import model_loader
@@ -52,6 +54,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
+        allow_origin_regex=settings.cors_origin_regex,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

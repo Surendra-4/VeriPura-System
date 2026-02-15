@@ -2,10 +2,14 @@
 
 import axios from 'axios';
 
-// Create axios instance with default config
+const configuredBaseURL = import.meta.env.VITE_API_BASE_URL?.trim()?.replace(/\/+$/, '');
+const baseURL = import.meta.env.DEV ? (configuredBaseURL || 'http://localhost:8000') : '';
+
+// Create axios instance with default config.
+// In production we intentionally use same-origin requests and rely on Vercel rewrites.
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
-  timeout: 300000, // 30 seconds (ML inference can be slow)
+  baseURL,
+  timeout: 300000, // 5 minutes (OCR + ML can be slow on free-tier cold starts)
 });
 
 // Request interceptor (for future auth tokens)

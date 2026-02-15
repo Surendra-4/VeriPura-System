@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://veripura-system.onrender.com/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://veripura-system.onrender.com/health"
     }
   ],
   "headers": [

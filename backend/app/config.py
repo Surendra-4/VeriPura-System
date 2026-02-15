@@ -35,6 +35,7 @@ class Settings(BaseSettings):
 
     # CORS
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origin_regex: str | None = r"https://.*\.vercel\.app$"
 
     # Logging
     log_level: str = "INFO"
@@ -58,6 +59,11 @@ class Settings(BaseSettings):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        # Normalize configured origins to avoid slash mismatch:
+        # browser Origin header is sent without trailing slash.
+        self.cors_origins = [origin.rstrip("/") for origin in self.cors_origins]
+        self.qr_base_url = self.qr_base_url.rstrip("/")
+
         # Ensure critical directories exist
         self.upload_dir.mkdir(parents=True, exist_ok=True)
         self.model_dir.mkdir(parents=True, exist_ok=True)

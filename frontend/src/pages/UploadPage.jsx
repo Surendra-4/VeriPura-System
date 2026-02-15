@@ -29,7 +29,18 @@ const UploadPage = () => {
       setUploadResult(result);
       setSelectedFile(null);
     } catch (err) {
-      setError(err.response?.data?.detail?.error || 'Upload failed. Please try again.');
+      const apiError = err.response?.data?.detail?.error;
+
+      if (apiError) {
+        setError(apiError);
+      } else if (err.response?.status) {
+        setError(`Upload failed (${err.response.status}). Please try again.`);
+      } else if (err.request) {
+        setError('Upload request was blocked or no response was received. Please refresh and try again.');
+      } else {
+        setError('Upload failed. Please try again.');
+      }
+
       console.error('Upload error:', err);
     } finally {
       setUploading(false);

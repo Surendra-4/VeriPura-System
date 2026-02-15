@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     tesseract_cmd: str = "tesseract"
     model_version: str = "v1"
     anomaly_threshold: float = 0.6  # Scores above this are flagged
+    anomaly_decision_threshold: float = -0.08  # decision_function <= threshold => anomaly
     min_text_length: int = 10  # Minimum characters for valid document
     max_text_length: int = 100000  # Maximum characters to process
 

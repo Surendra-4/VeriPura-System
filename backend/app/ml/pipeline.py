@@ -104,8 +104,8 @@ class MLPipeline:
         Run ML anomaly detection.
 
         Returns:
-            (is_anomaly, anomaly_score)
-            anomaly_score: -1 to 1 (lower = more anomalous)
+            (is_anomaly, decision_score)
+            decision_score: > 0 is inlier-like, < 0 is anomaly-like
         """
         model, scaler = model_loader.load_models()
 
@@ -118,35 +118,33 @@ class MLPipeline:
         # Scale features
         feature_vector_scaled = scaler.transform(feature_vector)
 
-        # Predict
-        prediction = model.predict(feature_vector_scaled)[0]  # 1 = normal, -1 = anomaly
-        score = model.score_samples(feature_vector_scaled)[0]  # Anomaly score
+        # IsolationForest decision_function is centered around 0:
+        # positive => inlier-like, negative => anomaly-like.
+        decision_score = float(model.decision_function(feature_vector_scaled)[0])
+        is_anomaly = decision_score <= self.settings.anomaly_decision_threshold
 
-        is_anomaly = prediction == -1
-
-        return is_anomaly, float(score)
+        return is_anomaly, decision_score
 
     def _compute_fraud_score(self, violations: list[RuleViolation], anomaly_score: float) -> float:
         """
         Compute final fraud score (0-100).
 
         Formula:
-        - Base score from ML (normalized anomaly score)
+        - Base score from ML decision score (calibrated to 0-100 via sigmoid)
         - Add penalties for rule violations
         """
-        # Normalize anomaly score to 0-100
-        # Isolation Forest scores typically range from -0.5 to 0.5
-        # Lower = more anomalous
-        ml_score = max(0, min(100, (0.5 - anomaly_score) * 100))
+        # Convert decision score to risk score:
+        # decision=0 => 50, positive => lower risk, negative => higher risk.
+        ml_score = 100.0 / (1.0 + np.exp(10.0 * anomaly_score))
 
         # Add rule violation penalties
-        severity_penalties = {"critical": 30, "high": 20, "medium": 10, "low": 5}
+        severity_penalties = {"critical": 15, "high": 10, "medium": 5, "low": 2}
         rule_penalty = sum(severity_penalties.get(v.severity, 0) for v in violations)
 
         # Combine (cap at 100)
-        fraud_score = min(100, ml_score + rule_penalty)
+        fraud_score = max(0.0, min(100.0, ml_score + rule_penalty))
 
-        return fraud_score
+        return float(fraud_score)
 
     def _compute_risk_level(self, fraud_score: float, violations: list[RuleViolation]) -> str:
         """

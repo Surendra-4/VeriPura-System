@@ -4,6 +4,8 @@ Tests for ML pipeline components.
 
 
 from app.ml.features import FeatureExtractor
+from app.ml.pipeline import MLPipeline
+from app.ml.rules import RuleViolation
 from app.ml.rules import RuleEngine
 
 
@@ -95,3 +97,39 @@ def test_rule_severity_levels():
 
     max_severity = engine.get_max_severity(violations)
     assert max_severity in ["critical", "high", "medium", "low"]
+
+
+def test_fraud_score_varies_with_decision_score():
+    """Fraud score should increase for more anomaly-like decision scores."""
+    pipeline = MLPipeline()
+
+    low_risk_score = pipeline._compute_fraud_score([], anomaly_score=0.1)
+    high_risk_score = pipeline._compute_fraud_score([], anomaly_score=-0.1)
+
+    assert high_risk_score > low_risk_score
+    assert 0 <= low_risk_score <= 100
+    assert 0 <= high_risk_score <= 100
+
+
+def test_rule_penalties_increase_fraud_score():
+    """Rule violations should raise fraud score on top of ML score."""
+    pipeline = MLPipeline()
+
+    base_score = pipeline._compute_fraud_score([], anomaly_score=0.0)
+    violations = [
+        RuleViolation(
+            rule_name="minimum_content",
+            severity="critical",
+            message="x",
+            feature_values={},
+        ),
+        RuleViolation(
+            rule_name="has_date",
+            severity="medium",
+            message="x",
+            feature_values={},
+        ),
+    ]
+    penalized_score = pipeline._compute_fraud_score(violations, anomaly_score=0.0)
+
+    assert penalized_score > base_score

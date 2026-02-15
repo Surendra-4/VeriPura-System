@@ -1,0 +1,33 @@
+.page {
+  min-height: 60vh;
+  display: grid;
+  align-items: center;
+  padding: 2.2rem 0;
+}
+
+.card {
+  max-width: 520px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(165deg, rgba(5, 24, 41, 0.92), rgba(6, 31, 45, 0.78));
+  box-shadow: var(--shadow-soft);
+  padding: 2rem;
+  text-align: center;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.card p {
+  color: var(--text-200);
+}
+
+.button {
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  color: #041622;
+  background: linear-gradient(135deg, #2dc9a5, #56c4ff);
+  cursor: pointer;
+}

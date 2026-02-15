@@ -1,22 +1,22 @@
 //Users/vaibhavithakur/veripura-system/frontend/src/api/client.js
 
 import axios from 'axios';
+import { getAccessToken } from '../auth/token';
 
 const configuredBaseURL = import.meta.env.VITE_API_BASE_URL?.trim()?.replace(/\/+$/, '');
-const baseURL = import.meta.env.DEV ? (configuredBaseURL || 'http://localhost:8000') : '';
+const baseURL = configuredBaseURL || (import.meta.env.DEV ? 'http://localhost:8000' : '');
 
-// Create axios instance with default config.
-// In production we intentionally use same-origin requests and rely on Vercel rewrites.
 const apiClient = axios.create({
   baseURL,
   timeout: 300000, // 5 minutes (OCR + ML can be slow on free-tier cold starts)
 });
 
-// Request interceptor (for future auth tokens)
 apiClient.interceptors.request.use(
   (config) => {
-    // Add auth token here when implemented
-    // config.headers.Authorization = `Bearer ${token}`;
+    const token = getAccessToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

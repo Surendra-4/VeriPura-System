@@ -9,7 +9,7 @@ from app.config import get_settings
 from app.db.session import dispose_database_engine, verify_database_connection
 from app.logger import logger
 from app.middleware.request_id import RequestIDMiddleware
-from app.routes import health, qr, shipments, upload, verify
+from app.routes import auth, health, qr, shipments, upload, verify
 
 
 @asynccontextmanager
@@ -67,6 +67,7 @@ def create_app() -> FastAPI:
 
     # Register routes
     app.include_router(health.router)
+    app.include_router(auth.router)
     app.include_router(upload.router)
     app.include_router(verify.router)
     app.include_router(shipments.router)

@@ -1,0 +1,161 @@
+.page {
+  padding: 2.2rem 0 3rem;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.2rem;
+  align-items: stretch;
+}
+
+.pitch,
+.panel {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(155deg, rgba(5, 24, 41, 0.92), rgba(6, 31, 45, 0.78));
+  box-shadow: var(--shadow-soft);
+}
+
+.pitch {
+  padding: 2rem;
+  display: grid;
+  gap: 1rem;
+  align-content: center;
+}
+
+.kicker {
+  color: var(--primary-400);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.pitch h1 {
+  max-width: 15ch;
+}
+
+.pitch p {
+  max-width: 48ch;
+  color: var(--text-200);
+}
+
+.panel {
+  padding: 1.4rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.tabRow {
+  border-radius: 999px;
+  background: rgba(86, 196, 255, 0.08);
+  border: 1px solid rgba(134, 206, 255, 0.2);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0.25rem;
+}
+
+.tab {
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-300);
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+}
+
+.activeTab {
+  color: var(--text-100);
+  background: linear-gradient(135deg, rgba(45, 201, 165, 0.35), rgba(86, 196, 255, 0.2));
+}
+
+.form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.label {
+  color: var(--text-200);
+  font-size: 0.84rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.input {
+  background: rgba(8, 34, 52, 0.66);
+  border: 1px solid rgba(134, 206, 255, 0.24);
+  color: var(--text-100);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  outline: none;
+}
+
+.input:focus {
+  border-color: rgba(86, 196, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(86, 196, 255, 0.16);
+}
+
+.error,
+.info {
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.error {
+  background: rgba(255, 111, 145, 0.16);
+  border: 1px solid rgba(255, 111, 145, 0.4);
+  color: #ffd9e2;
+}
+
+.info {
+  background: rgba(45, 201, 165, 0.16);
+  border: 1px solid rgba(45, 201, 165, 0.35);
+  color: #d9fff3;
+}
+
+.submitButton,
+.googleButton {
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submitButton {
+  margin-top: 0.35rem;
+  color: #041622;
+  background: linear-gradient(135deg, #2dc9a5, #56c4ff);
+}
+
+.googleButton {
+  background: rgba(240, 248, 255, 0.94);
+  color: #113248;
+}
+
+.submitButton:disabled,
+.googleButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.divider {
+  text-align: center;
+  color: var(--text-300);
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 960px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .pitch {
+    padding: 1.5rem;
+  }
+}

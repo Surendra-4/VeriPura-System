@@ -63,3 +63,54 @@ export const healthCheck = async () => {
   const response = await apiClient.get('/health');
   return response.data;
 };
+
+/**
+ * Register local account
+ * @param {{email: string, password: string}} payload
+ * @returns {Promise}
+ */
+export const registerUser = async (payload) => {
+  const response = await apiClient.post('/auth/register', payload);
+  return response.data;
+};
+
+/**
+ * Login with email/password
+ * @param {{email: string, password: string}} payload
+ * @returns {Promise<{access_token: string, token_type: string}>}
+ */
+export const loginUser = async (payload) => {
+  const response = await apiClient.post('/auth/login', payload);
+  return response.data;
+};
+
+/**
+ * Fetch current authenticated user
+ * @returns {Promise}
+ */
+export const getCurrentUser = async () => {
+  const response = await apiClient.get('/auth/me');
+  return response.data;
+};
+
+/**
+ * Fetch Google OAuth URL from backend
+ * @returns {Promise<{authorization_url: string, state: string}>}
+ */
+export const getGoogleLoginUrl = async () => {
+  const response = await apiClient.get('/auth/google/login');
+  return response.data;
+};
+
+/**
+ * Exchange Google authorization code for JWT
+ * @param {string} code
+ * @param {string | null} state
+ * @returns {Promise<{access_token: string, token_type: string}>}
+ */
+export const googleCallbackLogin = async (code, state) => {
+  const response = await apiClient.get('/auth/google/callback', {
+    params: { code, state },
+  });
+  return response.data;
+};

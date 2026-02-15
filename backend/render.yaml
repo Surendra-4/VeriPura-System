@@ -6,7 +6,12 @@ services:
     plan: free
     branch: main
 
-    buildCommand: "cd backend && pip install -r requirements.txt && python scripts/train_model.py"
+    buildCommand: |
+      apt-get update
+      apt-get install -y tesseract-ocr
+      cd backend
+      pip install -r requirements.txt
+      python scripts/train_model.py
 
     startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 
@@ -34,6 +39,9 @@ services:
 
       - key: QR_BASE_URL
         value: https://veripura-system.onrender.com
+
+      - key: TESSERACT_CMD
+        value: tesseract
 
       - key: CORS_ORIGINS
         value: '["https://veripura-system.vercel.app","https://veripura-system.onrender.com"]'

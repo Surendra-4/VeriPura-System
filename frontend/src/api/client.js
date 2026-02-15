@@ -1,4 +1,4 @@
-/Users/vaibhavithakur/veripura-system/frontend/src/api/client.js
+//Users/vaibhavithakur/veripura-system/frontend/src/api/client.js
 
 import axios from 'axios';
 

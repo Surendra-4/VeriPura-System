@@ -1,4 +1,4 @@
-# /Users/vaibhavithakur/veripura-system/frontend/src/api/services.js
+//Users/vaibhavithakur/veripura-system/frontend/src/api/services.js
 
 import apiClient from './client';
 

@@ -5,7 +5,7 @@ import axios from 'axios';
 // Create axios instance with default config
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
-  timeout: 30000, // 30 seconds (ML inference can be slow)
+  timeout: 120000, // 30 seconds (ML inference can be slow)
 });
 
 // Request interceptor (for future auth tokens)

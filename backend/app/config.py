@@ -1,4 +1,4 @@
-/Users/vaibhavithakur/veripura-system/backend/app/config.py
+# /Users/vaibhavithakur/veripura-system/backend/app/config.py
 
 from functools import lru_cache
 from pathlib import Path

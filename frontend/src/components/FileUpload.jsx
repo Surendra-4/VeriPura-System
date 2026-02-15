@@ -66,13 +66,17 @@ const FileUpload = ({ onFileSelect, disabled = false }) => {
         style={{ display: 'none' }}
       />
 
-      <div className={styles.uploadIcon}>📄</div>
+      <div className={styles.uploadIcon}>VP</div>
       <p className={styles.uploadText}>
-        <strong>Click to upload</strong> or drag and drop
+        <strong>Drop a file here</strong> or click to browse
       </p>
-      <p className={styles.uploadHint}>
-        PDF, PNG, JPG, or CSV (max 10 MB)
-      </p>
+      <p className={styles.uploadHint}>PDF, PNG, JPG, JPEG, CSV up to 10 MB</p>
+
+      <div className={styles.tagRow}>
+        <span className={styles.tag}>OCR Ready</span>
+        <span className={styles.tag}>AI Fraud Scan</span>
+        <span className={styles.tag}>Ledger Proof</span>
+      </div>
     </div>
   );
 };

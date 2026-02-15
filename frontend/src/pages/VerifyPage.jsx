@@ -44,25 +44,27 @@ const VerifyPage = () => {
   return (
     <div className={styles.page}>
       <div className="container">
-        <header className={styles.header}>
-          <h1>Verify Document</h1>
+        <header className={styles.hero}>
+          <p className={styles.kicker}>Public Traceability Endpoint</p>
+          <h1>Verify Any Batch In Real Time</h1>
           <p className={styles.subtitle}>
-            Enter a batch ID to view verification details
+            Enter a batch ID from a QR label or partner portal to inspect document metadata,
+            fraud intelligence, and ledger proof.
           </p>
         </header>
 
-        <Card>
+        <Card className={styles.searchCard}>
           <form onSubmit={handleSearch} className={styles.searchForm}>
             <input
               type="text"
               value={searchId}
               onChange={(e) => setSearchId(e.target.value)}
-              placeholder="Enter Batch ID (e.g., BATCH-20260207-A3F5E8)"
+              placeholder="Enter Batch ID (e.g., BATCH-20260215-521EB7)"
               className={styles.searchInput}
               disabled={loading}
             />
             <button type="submit" className={styles.searchButton} disabled={loading || !searchId.trim()}>
-              Verify
+              Verify Batch
             </button>
           </form>
         </Card>
@@ -70,24 +72,27 @@ const VerifyPage = () => {
         {loading && (
           <div className={styles.loading}>
             <LoadingSpinner size="large" />
-            <p>Loading verification record...</p>
+            <p>Looking up ledger record...</p>
           </div>
         )}
 
         {error && (
           <Card>
             <div className={styles.error}>
-              <h3>❌ Not Found</h3>
+              <h3>Batch Not Found</h3>
               <p>{error}</p>
             </div>
           </Card>
         )}
 
         {record && !loading && (
-          <Card>
+          <Card className={styles.recordCard}>
             <div className={styles.record}>
               <div className={styles.recordHeader}>
-                <h2>✓ Verified</h2>
+                <div>
+                  <p className={styles.statusTag}>Verification Status</p>
+                  <h2>Verified Record</h2>
+                </div>
                 <span className={styles.batchId}>{record.batch_id}</span>
               </div>
 
@@ -95,15 +100,15 @@ const VerifyPage = () => {
                 <h3>Document Information</h3>
                 <div className={styles.grid}>
                   <div className={styles.field}>
-                    <span className={styles.label}>Filename:</span>
+                    <span className={styles.label}>Filename</span>
                     <span className={styles.value}>{record.document_metadata.original_filename}</span>
                   </div>
                   <div className={styles.field}>
-                    <span className={styles.label}>Type:</span>
+                    <span className={styles.label}>Type</span>
                     <span className={styles.value}>{record.document_metadata.document_type.toUpperCase()}</span>
                   </div>
                   <div className={styles.field}>
-                    <span className={styles.label}>Size:</span>
+                    <span className={styles.label}>Size</span>
                     <span className={styles.value}>{(record.document_metadata.file_size / 1024).toFixed(1)} KB</span>
                   </div>
                 </div>
@@ -113,34 +118,34 @@ const VerifyPage = () => {
                 <h3>Validation Results</h3>
                 <div className={styles.grid}>
                   <div className={styles.field}>
-                    <span className={styles.label}>Fraud Score:</span>
+                    <span className={styles.label}>Fraud Score</span>
                     <span className={styles.value}>{record.validation_result.fraud_score.toFixed(1)}</span>
                   </div>
                   <div className={styles.field}>
-                    <span className={styles.label}>Risk Level:</span>
+                    <span className={styles.label}>Risk Level</span>
                     <span className={`${styles.badge} ${styles[record.validation_result.risk_level]}`}>
                       {record.validation_result.risk_level.toUpperCase()}
                     </span>
                   </div>
                   <div className={styles.field}>
-                    <span className={styles.label}>Anomaly:</span>
-                    <span className={styles.value}>{record.validation_result.is_anomaly ? 'Yes ⚠️' : 'No ✓'}</span>
+                    <span className={styles.label}>Anomaly</span>
+                    <span className={styles.value}>{record.validation_result.is_anomaly ? 'Yes' : 'No'}</span>
                   </div>
                 </div>
               </div>
 
               <div className={styles.section}>
-                <h3>Blockchain Record</h3>
+                <h3>Ledger Hash Chain</h3>
                 <div className={styles.field}>
-                  <span className={styles.label}>Record Hash:</span>
+                  <span className={styles.label}>Record Hash</span>
                   <span className={styles.hash}>{record.record_hash}</span>
                 </div>
                 <div className={styles.field}>
-                  <span className={styles.label}>Previous Hash:</span>
+                  <span className={styles.label}>Previous Hash</span>
                   <span className={styles.hash}>{record.previous_hash || 'Genesis Block'}</span>
                 </div>
                 <div className={styles.field}>
-                  <span className={styles.label}>Timestamp:</span>
+                  <span className={styles.label}>Timestamp</span>
                   <span className={styles.value}>{new Date(record.timestamp).toLocaleString()}</span>
                 </div>
               </div>

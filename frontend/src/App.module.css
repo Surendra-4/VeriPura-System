@@ -1,69 +1,187 @@
 .app {
   min-height: 100vh;
+  position: relative;
   display: flex;
   flex-direction: column;
 }
 
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.orbA,
+.orbB {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(36px);
+}
+
+.orbA {
+  width: 360px;
+  height: 360px;
+  top: 10%;
+  right: 10%;
+  background: rgba(45, 201, 165, 0.15);
+}
+
+.orbB {
+  width: 500px;
+  height: 500px;
+  bottom: -180px;
+  left: -180px;
+  background: rgba(86, 196, 255, 0.14);
+}
+
 .nav {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--space-md) 0;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(180deg, rgba(3, 18, 30, 0.92) 0%, rgba(3, 18, 30, 0.72) 100%);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .navContent {
+  min-height: 82px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
 }
 
-.logo {
-  font-size: 1.5rem;
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brandMark {
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+  background: linear-gradient(140deg, rgba(45, 201, 165, 0.3), rgba(86, 196, 255, 0.32));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--glow-primary);
+}
+
+.brandCore {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  transform: rotate(45deg);
+  background: linear-gradient(140deg, #f4ffff, #8ad1ff);
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.brandName {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: var(--color-primary);
-  text-decoration: none;
+  color: var(--text-100);
+}
+
+.brandTag {
+  color: var(--text-300);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .navLinks {
   display: flex;
-  gap: var(--space-xl);
+  align-items: center;
+  gap: 0.65rem;
 }
 
 .navLink {
-  color: var(--color-text);
-  text-decoration: none;
+  color: var(--text-200);
   font-weight: 500;
-  transition: color 0.2s;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .navLink:hover {
-  color: var(--color-primary);
+  color: var(--text-100);
+  background: rgba(86, 196, 255, 0.1);
 }
 
-main {
+.navLinkActive {
+  color: var(--text-100);
+  background: rgba(45, 201, 165, 0.15);
+  border: 1px solid rgba(85, 220, 186, 0.5);
+}
+
+.navCta {
+  margin-left: 0.3rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  color: var(--text-100);
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(45, 201, 165, 0.2), rgba(86, 196, 255, 0.08));
+}
+
+.navCta:hover {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(45, 201, 165, 0.35), rgba(86, 196, 255, 0.2));
+}
+
+.main {
   flex: 1;
+  padding: 1.2rem 0 2.4rem;
 }
 
 .footer {
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: var(--space-xl) 0;
-  text-align: center;
-  color: var(--color-text-secondary);
-  margin-top: var(--space-2xl);
+  border-top: 1px solid var(--border-soft);
+  background: linear-gradient(180deg, rgba(2, 13, 23, 0.7), rgba(2, 13, 23, 0.95));
+  padding: 2rem 0 2.4rem;
 }
 
-.footer p {
-  margin: 0;
+.footerContent {
+  display: grid;
+  gap: 0.35rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+.footerTitle {
+  color: var(--text-100);
+  font-family: 'Sora', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.footerCopy {
+  color: var(--text-300);
+  font-size: 0.95rem;
+  max-width: 760px;
+}
+
+@media (max-width: 900px) {
   .navContent {
+    min-height: auto;
+    padding: 0.8rem 0;
     flex-direction: column;
-    gap: var(--space-md);
+    align-items: stretch;
   }
 
   .navLinks {
-    gap: var(--space-lg);
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .navCta {
+    margin-left: 0;
   }
 }

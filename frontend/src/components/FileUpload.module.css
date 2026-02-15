@@ -1,40 +1,75 @@
 .uploadArea {
-  border: 2px dashed var(--color-border);
+  border: 1.5px dashed rgba(120, 194, 232, 0.55);
   border-radius: var(--radius-lg);
-  padding: var(--space-2xl);
+  padding: clamp(1.1rem, 2.4vw, 2.2rem);
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
-  background-color: var(--color-surface);
+  transition: border-color 0.22s ease, background-color 0.22s ease, transform 0.22s ease;
+  background: linear-gradient(155deg, rgba(15, 49, 73, 0.72), rgba(10, 35, 53, 0.48));
 }
 
 .uploadArea:hover:not(.disabled) {
-  border-color: var(--color-primary);
-  background-color: rgba(33, 128, 141, 0.05);
+  border-color: rgba(124, 228, 205, 0.8);
+  background: linear-gradient(155deg, rgba(17, 63, 91, 0.72), rgba(10, 41, 61, 0.6));
+  transform: translateY(-2px);
 }
 
 .dragging {
-  border-color: var(--color-primary);
-  background-color: rgba(33, 128, 141, 0.1);
+  border-color: rgba(124, 228, 205, 0.9);
+  background: linear-gradient(155deg, rgba(19, 70, 96, 0.8), rgba(14, 47, 67, 0.7));
+  box-shadow: 0 0 0 3px rgba(45, 201, 165, 0.2);
 }
 
 .disabled {
-  opacity: 0.5;
+  opacity: 0.58;
   cursor: not-allowed;
 }
 
 .uploadIcon {
-  font-size: 3rem;
-  margin-bottom: var(--space-md);
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 0.9rem;
+  border-radius: 18px;
+  border: 1px solid rgba(155, 230, 255, 0.45);
+  background: linear-gradient(135deg, rgba(45, 201, 165, 0.22), rgba(86, 196, 255, 0.24));
+  display: grid;
+  place-items: center;
+  font-family: 'Sora', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #e8fcff;
 }
 
 .uploadText {
-  font-size: 1rem;
-  margin-bottom: var(--space-sm);
-  color: var(--color-text);
+  font-size: 1.03rem;
+  margin-bottom: 0.15rem;
+  color: var(--text-100);
+}
+
+.uploadText strong {
+  font-weight: 700;
 }
 
 .uploadHint {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-300);
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.42rem;
+}
+
+.tag {
+  border-radius: 999px;
+  border: 1px solid rgba(146, 220, 255, 0.36);
+  background: rgba(10, 35, 53, 0.8);
+  color: #d4ecfa;
+  font-size: 0.74rem;
+  padding: 0.26rem 0.6rem;
+  letter-spacing: 0.04em;
 }

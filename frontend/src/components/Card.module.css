@@ -1,12 +1,21 @@
 .card {
-  background-color: var(--color-surface);
+  position: relative;
+  overflow: hidden;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-xl);
-  transition: box-shadow 0.2s;
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(145deg, var(--surface-900), var(--surface-800));
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(8px);
+  padding: clamp(1rem, 2vw, 1.5rem);
 }
 
-.card:hover {
-  box-shadow: var(--shadow-md);
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(146, 220, 255, 0.75), transparent);
+  opacity: 0.7;
 }

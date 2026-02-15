@@ -1,3 +1,5 @@
+/Users/vaibhavithakur/veripura-system/backend/app/config.py
+
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -37,7 +39,7 @@ class Settings(BaseSettings):
     # Logging
     log_level: str = "INFO"
 
-    tesseract_cmd: str = "/opt/homebrew/bin/tesseract"
+    tesseract_cmd: str = "tesseract"
     model_version: str = "v1"
     anomaly_threshold: float = 0.6  # Scores above this are flagged
     min_text_length: int = 10  # Minimum characters for valid document

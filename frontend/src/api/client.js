@@ -1,3 +1,5 @@
+/Users/vaibhavithakur/veripura-system/frontend/src/api/client.js
+
 import axios from 'axios';
 
 // Create axios instance with default config

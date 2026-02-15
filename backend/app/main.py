@@ -1,3 +1,5 @@
+# /Users/vaibhavithakur/veripura-system/backend/app/main.py
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -19,6 +21,8 @@ async def lifespan(app: FastAPI):
     logger.info(f"Environment: {settings.environment}")
     logger.info(f"Upload directory: {settings.upload_dir}")
     logger.info(f"Model directory: {settings.model_dir}")
+    
+    logger.info(f"ACTIVE TESSERACT CMD: {settings.tesseract_cmd}")
 
     from app.ml.model_loader import model_loader
 

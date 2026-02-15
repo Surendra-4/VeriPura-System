@@ -165,6 +165,64 @@ class DocumentParser:
             raise ParserError(f"Invalid CSV format: {str(e)}") from e
 
     @staticmethod
+    def _extract_first_match(text: str, patterns: list[str]) -> str | None:
+        """
+        Return first non-empty captured group from the provided regex patterns.
+        """
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
+            if not match:
+                continue
+
+            value = match.group(1).strip(" \t:;,-")
+            if value:
+                return value
+
+        return None
+
+    def extract_structured_fields(self, text: str) -> dict[str, str | list[str] | None]:
+        """
+        Extract key shipment entities used by consistency checks.
+        """
+        batch_id = self._extract_first_match(
+            text,
+            [
+                r"\bbatch[\s_-]*id[:#\s-]*([A-Za-z0-9-]{3,})\b",
+                r"\b(BATCH-[A-Za-z0-9-]+)\b",
+            ],
+        )
+        exporter = self._extract_first_match(
+            text,
+            [
+                r"\bexporter(?:\s*name)?[:\s-]+([^\n]{2,80})",
+                r"\bsupplier(?:\s*name)?[:\s-]+([^\n]{2,80})",
+            ],
+        )
+        quantity = self._extract_first_match(
+            text,
+            [
+                r"\bquantity[:\s-]+([0-9][0-9,.\s]*(?:kg|kgs|mt|tons?|units?|pcs|liters?|l)?)",
+                r"\bqty[:\s-]+([0-9][0-9,.\s]*(?:kg|kgs|mt|tons?|units?|pcs|liters?|l)?)",
+            ],
+        )
+        certificate_id = self._extract_first_match(
+            text,
+            [
+                r"\bcertificate(?:\s*id)?[:#\s-]+([A-Za-z0-9-]{3,})",
+                r"\bcert(?:ificate)?[:#\s-]+([A-Za-z0-9-]{3,})",
+            ],
+        )
+        dates = list(dict.fromkeys(self.extract_dates(text)))
+
+        return {
+            "batch_id": batch_id,
+            "exporter": exporter,
+            "quantity": quantity,
+            "dates": dates,
+            "certificate_id": certificate_id,
+        }
+
+    @staticmethod
     def extract_numbers(text: str) -> list[float]:
         """
         Extract all numeric values from text.

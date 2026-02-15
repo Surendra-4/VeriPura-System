@@ -1,0 +1,132 @@
+.wrapper {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.headerRow h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.headerRow p {
+  margin: 0;
+  color: var(--text-300);
+  font-size: 0.9rem;
+}
+
+.legend {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-200);
+}
+
+.matchDot,
+.mismatchDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.matchDot {
+  background: #2dc9a5;
+}
+
+.mismatchDot {
+  background: #ff6f91;
+}
+
+.canvasWrap {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(120, 194, 232, 0.34);
+  background: rgba(7, 30, 47, 0.62);
+  overflow: auto;
+}
+
+.canvas {
+  width: 100%;
+  min-width: 720px;
+  display: block;
+}
+
+.columnTitle {
+  fill: #b8d7ea;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.edgePath {
+  fill: none;
+  cursor: pointer;
+  transition: opacity 0.18s ease;
+}
+
+.docNode {
+  fill: rgba(26, 86, 120, 0.85);
+  stroke: rgba(120, 194, 232, 0.5);
+}
+
+.entityNode {
+  fill: rgba(11, 64, 56, 0.85);
+  stroke: rgba(92, 214, 186, 0.5);
+}
+
+.nodeTitle {
+  fill: #f0fbff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.entityField {
+  fill: #b7f3e4;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.nodeMeta {
+  fill: #c2dbe8;
+  font-size: 11px;
+}
+
+.edgeDetails {
+  border-radius: 12px;
+  border: 1px solid rgba(134, 206, 255, 0.34);
+  background: rgba(10, 40, 60, 0.7);
+  padding: 0.75rem 0.85rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.edgeDetails p {
+  margin: 0;
+  color: var(--text-200);
+}
+
+.loading,
+.error {
+  border-radius: 12px;
+  border: 1px solid rgba(134, 206, 255, 0.3);
+  background: rgba(10, 40, 60, 0.7);
+  padding: 0.75rem 0.85rem;
+  color: var(--text-200);
+}
+
+.error {
+  border-color: rgba(255, 111, 145, 0.55);
+  color: #ffd6e1;
+}

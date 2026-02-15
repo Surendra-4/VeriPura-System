@@ -24,6 +24,7 @@ class ValidationResult:
     top_features: list[tuple[str, float]]  # Top contributing features
     raw_features: dict[str, float]
     text_excerpt: str  # First 200 chars of extracted text
+    structured_fields: dict[str, str | list[str] | None]
 
 
 class MLPipeline:
@@ -64,6 +65,7 @@ class MLPipeline:
         # Step 1: Parse document
         text = self.parser.parse(file_path, doc_type)
         text_excerpt = text[:200].replace("\n", " ")
+        structured_fields = self.parser.extract_structured_fields(text)
 
         # Step 2: Extract features
         features = self.feature_extractor.extract(text)
@@ -92,6 +94,7 @@ class MLPipeline:
             top_features=top_features,
             raw_features=features,
             text_excerpt=text_excerpt,
+            structured_fields=structured_fields,
         )
 
         logger.info(

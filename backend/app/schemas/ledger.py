@@ -4,6 +4,16 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
+class ExtractedEntityFields(BaseModel):
+    """Structured entities persisted for shipment consistency analysis."""
+
+    batch_id: str | None = None
+    exporter: str | None = None
+    quantity: str | None = None
+    dates: list[str] = Field(default_factory=list)
+    certificate_id: str | None = None
+
+
 class DocumentMetadataSummary(BaseModel):
     """Subset of document metadata for ledger storage"""
 
@@ -11,6 +21,7 @@ class DocumentMetadataSummary(BaseModel):
     file_size: int
     document_type: str
     mime_type: str
+    extracted_entities: ExtractedEntityFields = Field(default_factory=ExtractedEntityFields)
 
 
 class ValidationResultSummary(BaseModel):

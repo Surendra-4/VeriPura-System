@@ -137,3 +137,26 @@ def test_ledger_integrity_check(client):
     data = response.json()
     assert "is_valid" in data
     assert "total_records" in data
+
+
+def test_shipment_consistency_graph(client, sample_pdf_content):
+    """Test shipment consistency graph endpoint."""
+    files = {"file": ("test.pdf", io.BytesIO(sample_pdf_content), "application/pdf")}
+    upload_response = client.post("/api/v1/upload", files=files)
+    shipment_id = upload_response.json()["verification"]["batch_id"]
+
+    response = client.get(f"/api/v1/shipments/{shipment_id}/consistency-graph")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["shipment_id"] == shipment_id
+    assert len(data["nodes"]) > 0
+    assert len(data["edges"]) > 0
+    assert {"field_name", "type", "explanation"}.issubset(data["edges"][0].keys())
+
+
+def test_shipment_consistency_graph_not_found(client):
+    """Test consistency graph lookup for unknown shipment."""
+    response = client.get("/api/v1/shipments/SHIPMENT-DOES-NOT-EXIST/consistency-graph")
+
+    assert response.status_code == 404

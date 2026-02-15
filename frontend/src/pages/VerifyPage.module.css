@@ -117,6 +117,10 @@
   margin-top: var(--space-lg);
 }
 
+.graphCard {
+  margin-top: var(--space-md);
+}
+
 .record {
   display: grid;
   gap: var(--space-lg);

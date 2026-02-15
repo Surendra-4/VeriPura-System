@@ -10,7 +10,11 @@ from app.logger import logger
 from app.ml.pipeline import MLPipeline
 from app.ml.parser import ParserError
 from app.schemas.upload import DocumentType, FileMetadata
-from app.schemas.validation import RuleViolationSchema, ValidationResponse
+from app.schemas.validation import (
+    ExtractedStructuredFields,
+    RuleViolationSchema,
+    ValidationResponse,
+)
 
 
 class DocumentServiceError(Exception):
@@ -136,6 +140,7 @@ class DocumentService:
             rule_violations=violations,
             top_features=result.top_features,
             text_excerpt=result.text_excerpt,
+            structured_fields=ExtractedStructuredFields(**result.structured_fields),
         )
 
     async def process_upload(self, file: UploadFile) -> FileMetadata:

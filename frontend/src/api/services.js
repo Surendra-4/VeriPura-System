@@ -27,6 +27,16 @@ export const getVerificationRecord = async (batchId) => {
 };
 
 /**
+ * Get shipment consistency graph
+ * @param {string} shipmentId - Shipment identifier
+ * @returns {Promise} Graph with nodes and edges
+ */
+export const getShipmentConsistencyGraph = async (shipmentId) => {
+  const response = await apiClient.get(`/api/v1/shipments/${shipmentId}/consistency-graph`);
+  return response.data;
+};
+
+/**
  * Get QR code as base64
  * @param {string} batchId - Batch identifier
  * @returns {Promise} QR code data

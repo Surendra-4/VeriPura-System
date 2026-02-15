@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
+import ConsistencyGraph from '../components/ConsistencyGraph';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getVerificationRecord } from '../api/services';
 import styles from './VerifyPage.module.css';
@@ -86,71 +87,77 @@ const VerifyPage = () => {
         )}
 
         {record && !loading && (
-          <Card className={styles.recordCard}>
-            <div className={styles.record}>
-              <div className={styles.recordHeader}>
-                <div>
-                  <p className={styles.statusTag}>Verification Status</p>
-                  <h2>Verified Record</h2>
+          <>
+            <Card className={styles.recordCard}>
+              <div className={styles.record}>
+                <div className={styles.recordHeader}>
+                  <div>
+                    <p className={styles.statusTag}>Verification Status</p>
+                    <h2>Verified Record</h2>
+                  </div>
+                  <span className={styles.batchId}>{record.batch_id}</span>
                 </div>
-                <span className={styles.batchId}>{record.batch_id}</span>
-              </div>
 
-              <div className={styles.section}>
-                <h3>Document Information</h3>
-                <div className={styles.grid}>
-                  <div className={styles.field}>
-                    <span className={styles.label}>Filename</span>
-                    <span className={styles.value}>{record.document_metadata.original_filename}</span>
-                  </div>
-                  <div className={styles.field}>
-                    <span className={styles.label}>Type</span>
-                    <span className={styles.value}>{record.document_metadata.document_type.toUpperCase()}</span>
-                  </div>
-                  <div className={styles.field}>
-                    <span className={styles.label}>Size</span>
-                    <span className={styles.value}>{(record.document_metadata.file_size / 1024).toFixed(1)} KB</span>
+                <div className={styles.section}>
+                  <h3>Document Information</h3>
+                  <div className={styles.grid}>
+                    <div className={styles.field}>
+                      <span className={styles.label}>Filename</span>
+                      <span className={styles.value}>{record.document_metadata.original_filename}</span>
+                    </div>
+                    <div className={styles.field}>
+                      <span className={styles.label}>Type</span>
+                      <span className={styles.value}>{record.document_metadata.document_type.toUpperCase()}</span>
+                    </div>
+                    <div className={styles.field}>
+                      <span className={styles.label}>Size</span>
+                      <span className={styles.value}>{(record.document_metadata.file_size / 1024).toFixed(1)} KB</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.section}>
-                <h3>Validation Results</h3>
-                <div className={styles.grid}>
-                  <div className={styles.field}>
-                    <span className={styles.label}>Fraud Score</span>
-                    <span className={styles.value}>{record.validation_result.fraud_score.toFixed(1)}</span>
-                  </div>
-                  <div className={styles.field}>
-                    <span className={styles.label}>Risk Level</span>
-                    <span className={`${styles.badge} ${styles[record.validation_result.risk_level]}`}>
-                      {record.validation_result.risk_level.toUpperCase()}
-                    </span>
-                  </div>
-                  <div className={styles.field}>
-                    <span className={styles.label}>Anomaly</span>
-                    <span className={styles.value}>{record.validation_result.is_anomaly ? 'Yes' : 'No'}</span>
+                <div className={styles.section}>
+                  <h3>Validation Results</h3>
+                  <div className={styles.grid}>
+                    <div className={styles.field}>
+                      <span className={styles.label}>Fraud Score</span>
+                      <span className={styles.value}>{record.validation_result.fraud_score.toFixed(1)}</span>
+                    </div>
+                    <div className={styles.field}>
+                      <span className={styles.label}>Risk Level</span>
+                      <span className={`${styles.badge} ${styles[record.validation_result.risk_level]}`}>
+                        {record.validation_result.risk_level.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className={styles.field}>
+                      <span className={styles.label}>Anomaly</span>
+                      <span className={styles.value}>{record.validation_result.is_anomaly ? 'Yes' : 'No'}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.section}>
-                <h3>Ledger Hash Chain</h3>
-                <div className={styles.field}>
-                  <span className={styles.label}>Record Hash</span>
-                  <span className={styles.hash}>{record.record_hash}</span>
-                </div>
-                <div className={styles.field}>
-                  <span className={styles.label}>Previous Hash</span>
-                  <span className={styles.hash}>{record.previous_hash || 'Genesis Block'}</span>
-                </div>
-                <div className={styles.field}>
-                  <span className={styles.label}>Timestamp</span>
-                  <span className={styles.value}>{new Date(record.timestamp).toLocaleString()}</span>
+                <div className={styles.section}>
+                  <h3>Ledger Hash Chain</h3>
+                  <div className={styles.field}>
+                    <span className={styles.label}>Record Hash</span>
+                    <span className={styles.hash}>{record.record_hash}</span>
+                  </div>
+                  <div className={styles.field}>
+                    <span className={styles.label}>Previous Hash</span>
+                    <span className={styles.hash}>{record.previous_hash || 'Genesis Block'}</span>
+                  </div>
+                  <div className={styles.field}>
+                    <span className={styles.label}>Timestamp</span>
+                    <span className={styles.value}>{new Date(record.timestamp).toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+
+            <Card className={styles.graphCard}>
+              <ConsistencyGraph shipmentId={record.batch_id} />
+            </Card>
+          </>
         )}
       </div>
     </div>

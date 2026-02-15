@@ -1,6 +1,16 @@
 from pydantic import BaseModel, Field
 
 
+class ExtractedStructuredFields(BaseModel):
+    """Structured entities extracted from document content."""
+
+    batch_id: str | None = None
+    exporter: str | None = None
+    quantity: str | None = None
+    dates: list[str] = Field(default_factory=list)
+    certificate_id: str | None = None
+
+
 class RuleViolationSchema(BaseModel):
     """Schema for rule violation"""
 
@@ -22,3 +32,7 @@ class ValidationResponse(BaseModel):
         ..., description="Top 5 features contributing to score"
     )
     text_excerpt: str = Field(..., description="First 200 chars of extracted text")
+    structured_fields: ExtractedStructuredFields = Field(
+        default_factory=ExtractedStructuredFields,
+        description="Structured entities extracted from the document",
+    )

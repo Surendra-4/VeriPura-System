@@ -3,7 +3,9 @@
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +24,9 @@ class Settings(BaseSettings):
     # Server
     host: str = "0.0.0.0"
     port: int = 8000
+
+    # Database
+    database_url: str = Field(..., validation_alias="DATABASE_URL")
 
     # Paths (relative to project root)
     base_dir: Path = Path(__file__).parent.parent
@@ -69,6 +74,70 @@ class Settings(BaseSettings):
         self.upload_dir.mkdir(parents=True, exist_ok=True)
         self.model_dir.mkdir(parents=True, exist_ok=True)
         self.ledger_path.parent.mkdir(parents=True, exist_ok=True)
+
+    @property
+    def async_database_url(self) -> str:
+        """
+        Return SQLAlchemy async URL for Postgres.
+        Query args handled via connect_args are removed from URL.
+        """
+        raw_url = self.database_url
+        if raw_url.startswith("postgresql://"):
+            raw_url = raw_url.replace(
+                "postgresql://",
+                "postgresql+asyncpg://",
+                1,
+            )
+
+        if not raw_url.startswith("postgresql+asyncpg://"):
+            raise ValueError("DATABASE_URL must start with postgresql:// or postgresql+asyncpg://")
+
+        parsed = urlsplit(raw_url)
+        query_items = [
+            (key, value)
+            for key, value in parse_qsl(parsed.query, keep_blank_values=True)
+            if key not in {"sslmode", "ssl"}
+        ]
+        cleaned_query = urlencode(query_items)
+        return urlunsplit(
+            (
+                parsed.scheme,
+                parsed.netloc,
+                parsed.path,
+                cleaned_query,
+                parsed.fragment,
+            )
+        )
+
+    @property
+    def database_connect_args(self) -> dict[str, bool | str]:
+        """
+        Build asyncpg-compatible connect args from URL query options.
+        """
+        parsed = urlsplit(self.database_url)
+        query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+        connect_args: dict[str, bool | str] = {}
+
+        ssl_value = query.get("ssl")
+        ssl_mode = query.get("sslmode")
+
+        if ssl_mode and not ssl_value:
+            mode = ssl_mode.lower()
+            if mode == "disable":
+                connect_args["ssl"] = False
+            elif mode in {"allow", "prefer", "require", "verify-ca", "verify-full"}:
+                connect_args["ssl"] = mode
+
+        if ssl_value:
+            normalized_ssl = ssl_value.lower()
+            if normalized_ssl in {"1", "true", "yes"}:
+                connect_args["ssl"] = True
+            elif normalized_ssl in {"0", "false", "no"}:
+                connect_args["ssl"] = False
+            elif normalized_ssl in {"allow", "prefer", "require", "verify-ca", "verify-full"}:
+                connect_args["ssl"] = normalized_ssl
+
+        return connect_args
 
 
 @lru_cache

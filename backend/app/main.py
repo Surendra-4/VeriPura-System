@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
+from app.db.session import dispose_database_engine, verify_database_connection
 from app.logger import logger
 from app.middleware.request_id import RequestIDMiddleware
 from app.routes import health, qr, shipments, upload, verify
@@ -26,6 +27,9 @@ async def lifespan(app: FastAPI):
 
     logger.info(f"ACTIVE TESSERACT CMD: {settings.tesseract_cmd}")
 
+    await verify_database_connection()
+    logger.info("Database connection verified")
+
     from app.ml.model_loader import model_loader
 
     model_loader.preload()
@@ -33,6 +37,7 @@ async def lifespan(app: FastAPI):
     yield
 
     logger.info("Shutting down application")
+    await dispose_database_engine()
 
 
 def create_app() -> FastAPI:

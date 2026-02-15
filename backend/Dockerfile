@@ -14,7 +14,11 @@ COPY backend/ .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Train ML model
-RUN PYTHONPATH=/app python scripts/train_model.py
+# Build-time placeholders only; runtime env vars are injected by Render.
+RUN DATABASE_URL=postgresql://build:build@localhost:5432/build \
+    JWT_SECRET=build-placeholder-secret \
+    PYTHONPATH=/app \
+    python scripts/train_model.py
 
 EXPOSE 8000
 

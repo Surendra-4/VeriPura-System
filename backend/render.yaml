@@ -22,3 +22,15 @@ services:
 
       - key: CORS_ORIGINS
         value: '["https://veripura-system.vercel.app","https://veripura-system.onrender.com"]'
+
+      - key: DATABASE_URL
+        sync: false
+
+      - key: JWT_SECRET
+        sync: false
+
+      - key: JWT_ALGORITHM
+        value: HS256
+
+      - key: JWT_EXPIRE_MINUTES
+        value: "1440"

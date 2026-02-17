@@ -34,3 +34,12 @@ services:
 
       - key: JWT_EXPIRE_MINUTES
         value: "1440"
+
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+      - key: GOOGLE_REDIRECT_URI
+        sync: false
